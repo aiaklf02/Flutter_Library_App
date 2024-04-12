@@ -32,7 +32,7 @@ class Book {
 class BookDataProvider {
   static const tableName = 'books';
   late final Database db;
-  
+
   Future<BookDataProvider> init() async {
     await initDatabase();
     return this;
