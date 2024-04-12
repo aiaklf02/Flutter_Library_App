@@ -149,7 +149,8 @@ class MyHomePage extends StatelessWidget {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => GestionLivres()),
+                  // u need to create the bookrepository instance before calling it in the main or it wont work
+                  MaterialPageRoute(builder: (context) => GestionLivres(bookRepository: BookDataProvider().init().then((dataProvider) => BookRepository(dataProvider: dataProvider)),),),
                 );
               },
             ),
