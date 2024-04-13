@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'AddNewBook.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'GestionEmpreintes.dart';
+import 'GestionEmprunts.dart';
 import 'package:path_provider/path_provider.dart';
 
 
@@ -29,17 +29,8 @@ class Book {
     };
 
   }
-  factory Book.fromMap(Map<String, dynamic> map) {
-    return Book(
-      bookId: map['bookId'],
-      title: map['title'],
-      author: map['author'],
-      category: map['category'],
-      publicationYear: map['publicationYear'],
-      availableCopies: map['availableCopies'],
-      imagePath: map['imagePath'],
-    );
-  }
+ 
+
 }
 
 class BookDataProvider {
@@ -58,38 +49,15 @@ class BookDataProvider {
         db.execute(
           "CREATE TABLE $tableName(bookId INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, author TEXT, category TEXT, publicationYear INTEGER, availableCopies INTEGER, imagePath TEXT)",
         );
-        Empreinte.createTable(db); 
+        createEmpruntTable(db);
       },
       version: 1,
     );
 
 
   }
-  Future<List<Empreinte>> getAllEmpreintes() async {
-    try {
-      return await this.fetchAllEmpreintes();
-    } catch (e) {
-      print('Error fetching empreintes: $e');
-      return []; // Return an empty list in case of error
-    }
-  }
-
-  Future<List<Empreinte>> fetchAllEmpreintes() async {
-    try {
-      final List<Map<String, dynamic>> maps = await db.query('empreintes');
-
-      return List.generate(maps.length, (i) {
-        return Empreinte(
-          empreinteId: maps[i]['empreinteId'],
-          bookId: maps[i]['bookId'],
-          dateEmpreinte: maps[i]['dateEmpreinte'],
-        );
-      });
-    } catch (e) {
-      print('Error fetching empreintes: $e');
-      return []; // Return an empty list in case of error
-    }
-  }
+ 
+ 
 
   Future<List<Book>> fetchBooks() async {
     final List<Map<String, dynamic>> maps = await db.query(tableName);
@@ -131,31 +99,11 @@ class BookDataProvider {
       whereArgs: [bookId],
     );
   }
-  Future<void> addEmpreinte(Empreinte empreinte) async {
-    await Empreinte.insertEmpreinte(this.db, empreinte);
-  }
-
-  Future<List<Empreinte>> getEmpreintesForBook(int bookId) async {
-    return await Empreinte.getEmpreintesForBook(this.db, bookId);
-  }
-  Future<Book?> getBookById(int bookId) async {
-    try {
-      final List<Map<String, dynamic>> maps = await db.query(
-        'Books',
-        where: 'id = ?',
-        whereArgs: [bookId],
-      );
-
-      if (maps.isEmpty) {
-        return null;
-      }
-
-      return Book.fromMap(maps.first);
-    } catch (e) {
-      print('Erreur lors de la récupération du livre: $e');
-      return null;
-    }
-  }
+  Future<void> addEmprunt(Emprunt emprunt) async {
+  await db.insert('Emprunt', emprunt.toMap());
+}
+  
+  
 }
 
 
@@ -179,27 +127,44 @@ class BookRepository {
   Future<void> deleteBook(int bookId) async {
     await dataProvider.deleteBook(bookId);
   }
-  Future<Book?> getBookById(int bookId) async {
-    try {
-      final book = await dataProvider.getBookById(bookId);
-      return book;
-    } catch (e) {
-      print('Erreur lors de la récupération du livre: $e');
+
+ Future<Book?> getBookDetails(int bookId) async {
+    final List<Map<String, dynamic>> maps = await dataProvider.db.query(
+      BookDataProvider.tableName,
+      where: 'bookId = ?',
+      whereArgs: [bookId],
+    );
+
+    if (maps.isNotEmpty) {
+      return Book(
+        bookId: maps[0]['bookId'],
+        title: maps[0]['title'],
+        author: maps[0]['author'],
+        category: maps[0]['category'],
+        publicationYear: maps[0]['publicationYear'],
+        availableCopies: maps[0]['availableCopies'],
+        imagePath: maps[0]['imagePath'],
+      );
+    } else {
       return null;
     }
   }
 
-  Future<List<Empreinte>> getAllEmpreintes() async {
-  try {
-  final List<Empreinte> empreintes = await dataProvider.fetchAllEmpreintes();
-  return empreintes;
-  } catch (e) {
-  // Gérer les erreurs de récupération des empreintes
-  throw Exception('Erreur lors de la récupération des empreintes: $e');
-  }
-  }
-  }
+   Future<List<Emprunt>> getEmprunts() async {
+  
+    final List<Map<String, dynamic>> empruntsMap = await dataProvider.db.query('Emprunt');
 
+    return empruntsMap.map((empruntMap) {
+      return Emprunt(
+        empruntId: empruntMap['empruntId'],
+        bookId: empruntMap['bookId'],
+        dateEmprunt: DateTime.parse(empruntMap['dateEmprunt']),
+        dateRetour: DateTime.parse(empruntMap['dateRetour']),
+      );
+    }).toList();
+  }
+  
+}
 
 
 class GestionLivres extends StatefulWidget {
