@@ -1,16 +1,54 @@
 import 'package:flutter/material.dart';
+import 'GestionLivres.dart';
 
+class HistoriqueEmpreintesPage extends StatelessWidget {
+  final Future<BookRepository> bookRepository;
 
-class MesEmpreintesPage extends StatelessWidget {
+  HistoriqueEmpreintesPage({required this.bookRepository});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Mes Empreintes Page",style: TextStyle(color: Color.fromRGBO(255, 255,255,1),fontSize: 25),),
-        backgroundColor: Color.fromARGB(255, 43, 44, 68),
+        title: Text('Historique des Empreintes'),
       ),
-      body: Center(
-        child: Text('Mes Empreintes Page Content'),
+      body: FutureBuilder<List<Empreinte>>(
+        future: bookRepository.then((value) => value.getAllEmpreintes()), 
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (snapshot.hasData && snapshot.data!.isEmpty) {
+            return Center(child: Text('Aucune empreinte trouvée.'));
+          } else {
+            return ListView.builder(
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                final empreinte = snapshot.data![index];
+                return ListTile(
+                  title: FutureBuilder<Book?>(
+                    future: bookRepository.then((value) => value.getBookById(empreinte.bookId)),
+                    builder: (context, bookSnapshot) {
+                      if (bookSnapshot.connectionState == ConnectionState.waiting) {
+                        return Text('Chargement...');
+                      } else if (bookSnapshot.hasError) {
+                        return Text('Erreur: ${bookSnapshot.error}');
+                      } else {
+                        final book = bookSnapshot.data;
+                        if (book != null) {
+                          return Text('${book.title} - ${empreinte.dateEmpreinte}');
+                        } else {
+                          return Text('Livre introuvable');
+                        }
+                      }
+                    },
+                  ),
+                );
+              },
+            );
+          }
+        },
       ),
     );
   }

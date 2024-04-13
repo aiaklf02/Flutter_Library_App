@@ -45,6 +45,7 @@ class BookDataProvider {
         db.execute(
           "CREATE TABLE $tableName(bookId INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, author TEXT, category TEXT, publicationYear INTEGER, availableCopies INTEGER, imagePath TEXT)",
         );
+        Empreinte.createTable(db); 
       },
       version: 1,
     );
@@ -89,6 +90,13 @@ class BookDataProvider {
       where: "bookId = ?",
       whereArgs: [bookId],
     );
+  }
+  Future<void> addEmpreinte(Empreinte empreinte) async {
+    await Empreinte.insertEmpreinte(dataProvider.db, empreinte);
+  }
+
+  Future<List<Empreinte>> getEmpreintesForBook(int bookId) async {
+    return await Empreinte.getEmpreintesForBook(dataProvider.db, bookId);
   }
 }
 class BookRepository {
