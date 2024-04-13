@@ -34,10 +34,11 @@ class BookDetailsPage extends StatelessWidget {
       body:Container(
         color: Color.fromARGB(255, 43, 44, 68),
       child:ListView(
+
         children: [
           Container(
             width: double.infinity, // Take 100% width
-            height: MediaQuery.of(context).size.height * 0.6, // Take 60% height of the screen
+            height: MediaQuery.of(context).size.height * 0.7, // Take 60% height of the screen
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: FileImage(File(book.imagePath)),
@@ -46,11 +47,105 @@ class BookDetailsPage extends StatelessWidget {
             ),
           ),
           SizedBox(height: 20), // Add some space between the image and text
-          Text('Title: ${book.title}', style: TextStyle(color: Colors.white,fontSize: 25)),
-          Text('Author: ${book.author}', style: TextStyle(color: Colors.white,fontSize: 25)),
-          Text('Category: ${book.category}', style: TextStyle(color: Colors.white,fontSize: 25)),
-          Text('Publication Year: ${book.publicationYear}', style: TextStyle(color: Colors.white,fontSize: 25)),
-          Text('Available Copies: ${book.availableCopies}', style: TextStyle(color: Colors.white,fontSize: 25)),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20), // Add vertical padding around the entire column
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Title:',
+                      style: TextStyle(color: Colors.white, fontSize: 28),
+                    ),
+                    SizedBox(width: 20), // Add spacing of 20 units
+                    Expanded(
+                      child: Text(
+                        '${book.title}',
+                        style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
+                        overflow: TextOverflow.clip, // Clip text if it overflows
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Author: ',
+                      style: TextStyle(color: Colors.white, fontSize: 28),
+                    ),
+                    SizedBox(width: 20), // Add spacing of 20 units
+                    Expanded(
+                      child: Text(
+                        '${book.author}',
+                        style: TextStyle(color: Colors.white, fontSize: 25,fontWeight: FontWeight.bold),
+                        overflow: TextOverflow.clip, // Clip text if it overflows
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Category: ',
+                      style: TextStyle(color: Colors.white, fontSize: 28),
+                    ),
+                    SizedBox(width: 20), // Add spacing of 20 units
+                    Expanded(
+                      child: Text(
+                        '${book.category}',
+                        style: TextStyle(color: Colors.white, fontSize: 25,fontWeight: FontWeight.bold),
+                        overflow: TextOverflow.clip, // Clip text if it overflows
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Publication Year: ',
+                      style: TextStyle(color: Colors.white, fontSize: 28),
+                    ),
+                    SizedBox(width: 20), // Add spacing of 20 units
+                    Expanded(
+                      child: Text(
+                        '${book.publicationYear}',
+                        style: TextStyle(color: Colors.white, fontSize: 25,fontWeight: FontWeight.bold),
+                        overflow: TextOverflow.clip, // Clip text if it overflows
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Available Copies: ',
+                      style: TextStyle(color: Colors.white, fontSize: 28),
+                    ),
+                    SizedBox(width: 20), // Add spacing of 20 units
+                    Expanded(
+                      child: Text(
+                        '${book.availableCopies}',
+                        style: TextStyle(color: Colors.white, fontSize: 25,fontWeight: FontWeight.bold),
+                        overflow: TextOverflow.clip, // Clip text if it overflows
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 30),
+              ],
+            ),
+          ),
+
           SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -59,13 +154,13 @@ class BookDetailsPage extends StatelessWidget {
                 onPressed: () {
                   // Handle reserve button pressed
                 },
-                child: Text('Reserve'),
+                child: Text('Reserver',style: TextStyle(fontSize: 25),),
               ),
               ElevatedButton(
                 onPressed: () {
                   // Handle emprainte a copy button pressed
                 },
-                child: Text('Emprainte a Copy'),
+                child: Text('Emprainter',style: TextStyle(fontSize: 25),),
               ),
             ],
           ),

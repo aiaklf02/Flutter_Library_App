@@ -138,6 +138,34 @@ class _GestionLivresState extends State<GestionLivres> {
       appBar: AppBar(
         title: Text('Gestion Livres Page',style: TextStyle(color: Color.fromRGBO(255, 255,255,1),fontSize: 25),),
         backgroundColor: Color.fromARGB(255, 43, 44, 68),
+
+        actions: [
+          IconButton(
+            icon: Icon(Icons.add,size: 32, color: Colors.white),
+            onPressed: (){
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FutureBuilder<BookRepository>(
+                    future: widget.bookRepository,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return AddBookPage(
+                          bookRepository: Future.value(snapshot.data),
+                          onBookAdded: () {
+                            setState(() {});
+                          },
+                        );                    } else {
+                        return CircularProgressIndicator();
+                      }
+                    },
+                  ),
+                ),
+              );
+            }, // Call _refreshData when button is pressed
+          ),
+        ],
+
       ),
       body: Column(
         children: [
@@ -175,30 +203,8 @@ class _GestionLivresState extends State<GestionLivres> {
                 ],
               ),
             ),
-          ElevatedButton(
-          child: Text('Add Book'),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => FutureBuilder<BookRepository>(
-                  future: widget.bookRepository,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return AddBookPage(
-                        bookRepository: Future.value(snapshot.data),
-                        onBookAdded: () {
-                          setState(() {});
-                        },
-                      );                    } else {
-                      return CircularProgressIndicator();
-                    }
-                  },
-                ),
-              ),
-            );
-            },
-          ),
+          SizedBox(height: 25),
+
           Expanded(
             child: FutureBuilder<List<Book>>(
               future: widget.bookRepository.then((value) => value.getBooks()),
