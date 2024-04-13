@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'GestionLivres.dart';
 
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -11,7 +12,7 @@ class Empreinte {
   final String empreinte;
   final DateTime dateEmpreinte;
 
-  Empreinte({this.empreinteId, required this.bookId, required this.empreinte, required this.dateEmpreinte});
+  Empreinte({this.empreinteId, required this.bookId,  this.empreinte='', required this.dateEmpreinte});
 
   Map<String, dynamic> toMap() {
     return {
@@ -32,6 +33,7 @@ class Empreinte {
       )
     ''');
   }
+
 
   static Future<void> insertEmpreinte(Database db, Empreinte empreinte) async {
     await db.insert(
