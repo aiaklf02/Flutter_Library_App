@@ -184,7 +184,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MesEmpreintesPage()),
+                  MaterialPageRoute(builder: (context) => HistoriqueEmpreintesPage(bookRepository: widget.bookRepository),
+                )
                 );
               },
             ),
@@ -192,7 +193,7 @@ class _MyHomePageState extends State<MyHomePage> {
               leading: const Icon(Icons.video_label),
               title: const Text(' Retours ', style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1)),),
               onTap: () {
-                Navigator.pop(context);
+              Navigator.pop(context);
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => RetoursPage()),
