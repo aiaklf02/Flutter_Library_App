@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'GestionLivres.dart';
+import 'GestionEmpreintes.dart';
 
 class HistoriqueEmpreintesPage extends StatelessWidget {
-  final Future<BookRepository> bookRepository;
+  final BookRepository bookRepository;
 
   HistoriqueEmpreintesPage({required this.bookRepository});
 
@@ -13,7 +14,7 @@ class HistoriqueEmpreintesPage extends StatelessWidget {
         title: Text('Historique des Empreintes'),
       ),
       body: FutureBuilder<List<Empreinte>>(
-        future: bookRepository.then((value) => value.getAllEmpreintes()), 
+        future: bookRepository.getAllEmpreintes(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
@@ -28,7 +29,7 @@ class HistoriqueEmpreintesPage extends StatelessWidget {
                 final empreinte = snapshot.data![index];
                 return ListTile(
                   title: FutureBuilder<Book?>(
-                    future: bookRepository.then((value) => value.getBookById(empreinte.bookId)),
+                    future: bookRepository.getBookById(empreinte.bookId),
                     builder: (context, bookSnapshot) {
                       if (bookSnapshot.connectionState == ConnectionState.waiting) {
                         return Text('Chargement...');
@@ -43,6 +44,13 @@ class HistoriqueEmpreintesPage extends StatelessWidget {
                         }
                       }
                     },
+                  ),
+                  trailing: ElevatedButton(
+                    onPressed: () {
+                      // Logique pour gérer l'emprunt du livre
+                      // Par exemple, afficher une boîte de dialogue pour collecter les détails de l'emprunt.
+                    },
+                    child: Text('Emprunter'),
                   ),
                 );
               },

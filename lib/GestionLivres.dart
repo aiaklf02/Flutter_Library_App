@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'AddNewBook.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'GestionEmpreintes.dart';
 import 'package:path_provider/path_provider.dart';
 
 
@@ -26,6 +27,18 @@ class Book {
       'availableCopies': availableCopies,
       'imagePath': imagePath,
     };
+
+  }
+  factory Book.fromMap(Map<String, dynamic> map) {
+    return Book(
+      bookId: map['bookId'],
+      title: map['title'],
+      author: map['author'],
+      category: map['category'],
+      publicationYear: map['publicationYear'],
+      availableCopies: map['availableCopies'],
+      imagePath: map['imagePath'],
+    );
   }
 }
 
@@ -49,6 +62,33 @@ class BookDataProvider {
       },
       version: 1,
     );
+
+
+  }
+  Future<List<Empreinte>> getAllEmpreintes() async {
+    try {
+      return await this.fetchAllEmpreintes();
+    } catch (e) {
+      print('Error fetching empreintes: $e');
+      return []; // Return an empty list in case of error
+    }
+  }
+
+  Future<List<Empreinte>> fetchAllEmpreintes() async {
+    try {
+      final List<Map<String, dynamic>> maps = await db.query('empreintes');
+
+      return List.generate(maps.length, (i) {
+        return Empreinte(
+          empreinteId: maps[i]['empreinteId'],
+          bookId: maps[i]['bookId'],
+          dateEmpreinte: maps[i]['dateEmpreinte'],
+        );
+      });
+    } catch (e) {
+      print('Error fetching empreintes: $e');
+      return []; // Return an empty list in case of error
+    }
   }
 
   Future<List<Book>> fetchBooks() async {
@@ -92,13 +132,33 @@ class BookDataProvider {
     );
   }
   Future<void> addEmpreinte(Empreinte empreinte) async {
-    await Empreinte.insertEmpreinte(dataProvider.db, empreinte);
+    await Empreinte.insertEmpreinte(this.db, empreinte);
   }
 
   Future<List<Empreinte>> getEmpreintesForBook(int bookId) async {
-    return await Empreinte.getEmpreintesForBook(dataProvider.db, bookId);
+    return await Empreinte.getEmpreintesForBook(this.db, bookId);
+  }
+  Future<Book?> getBookById(int bookId) async {
+    try {
+      final List<Map<String, dynamic>> maps = await db.query(
+        'Books',
+        where: 'id = ?',
+        whereArgs: [bookId],
+      );
+
+      if (maps.isEmpty) {
+        return null;
+      }
+
+      return Book.fromMap(maps.first);
+    } catch (e) {
+      print('Erreur lors de la récupération du livre: $e');
+      return null;
+    }
   }
 }
+
+
 class BookRepository {
   final BookDataProvider dataProvider;
 
@@ -119,7 +179,28 @@ class BookRepository {
   Future<void> deleteBook(int bookId) async {
     await dataProvider.deleteBook(bookId);
   }
-}
+  Future<Book?> getBookById(int bookId) async {
+    try {
+      final book = await dataProvider.getBookById(bookId);
+      return book;
+    } catch (e) {
+      print('Erreur lors de la récupération du livre: $e');
+      return null;
+    }
+  }
+
+  Future<List<Empreinte>> getAllEmpreintes() async {
+  try {
+  final List<Empreinte> empreintes = await dataProvider.fetchAllEmpreintes();
+  return empreintes;
+  } catch (e) {
+  // Gérer les erreurs de récupération des empreintes
+  throw Exception('Erreur lors de la récupération des empreintes: $e');
+  }
+  }
+  }
+
+
 
 class GestionLivres extends StatefulWidget {
   final Future<BookRepository> bookRepository;
