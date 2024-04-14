@@ -59,6 +59,8 @@ class BookDetailsPage extends StatelessWidget {
             children: [
               ElevatedButton(
                 onPressed: () {
+                  _showReservationConfirmation(context, book.title);
+
                   // Handle reserve button pressed
                 },
                 child: Text('Reserver'),
@@ -86,6 +88,55 @@ class BookDetailsPage extends StatelessWidget {
 
 
       ),),
+    );
+  }
+
+
+  void _showReservationConfirmation(BuildContext context, String bookTitle) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirmation de réservation'),
+          content: Text('Voulez-vous vraiment réserver le livre "$bookTitle" ?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Annuler'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ElevatedButton(
+              child: Text('Réserver'),
+              onPressed: () {
+                _confirmReservation(context, bookTitle);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+  void _confirmReservation(BuildContext context, String bookTitle) {
+    // Implémentez la logique pour réserver le livre ici
+    // Par exemple, enregistrer la réservation dans une base de données ou un backend
+    // Une fois la réservation effectuée, affichez un message de confirmation
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Réservation effectuée'),
+          content: Text('Vous avez réservé le livre "$bookTitle" avec succès.'),
+          actions: <Widget>[
+            ElevatedButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
