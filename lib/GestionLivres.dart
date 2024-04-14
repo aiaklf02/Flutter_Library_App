@@ -163,6 +163,9 @@ class BookRepository {
       );
     }).toList();
   }
+  Future<void> addEmprunt(Emprunt emprunt) async {
+    await dataProvider.addEmprunt(emprunt);
+  }
   
 }
 
