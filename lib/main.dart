@@ -94,8 +94,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else {
                 return ListWheelScrollView(
-                  diameterRatio: 7.0,
-                  itemExtent: MediaQuery.of(context).size.height * 0.8,
+                  diameterRatio: 5.0,
+                  itemExtent: MediaQuery.of(context).size.height * 0.7,
                   children: snapshot.data!.map((book) {
                     return GestureDetector(
                       onTap: () {
