@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'GestionLivres.dart';
+import 'GestionEmprunts.dart';
 import 'dart:io';
-
+import 'package:provider/provider.dart';
 
 // class BookDetailsPage extends StatelessWidget {
 //   @override
@@ -24,11 +25,12 @@ class BookDetailsPage extends StatelessWidget {
 
   const BookDetailsPage({Key? key, required this.book}) : super(key: key);
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Book Details", style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1), fontSize: 25),),
+        title: Text("Details du Livre", style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1), fontSize: 25),),
         backgroundColor: Color.fromARGB(255, 43, 44, 68),
       ),
       body:Container(
@@ -154,13 +156,22 @@ class BookDetailsPage extends StatelessWidget {
                 onPressed: () {
                   // Handle reserve button pressed
                 },
-                child: Text('Reserver',style: TextStyle(fontSize: 25),),
+                child: Text('Reserver'),
               ),
               ElevatedButton(
-                onPressed: () {
-                  // Handle emprainte a copy button pressed
-                },
-                child: Text('Emprainter',style: TextStyle(fontSize: 25),),
+                  onPressed: () async {
+                  final bookRepository = Provider.of<BookRepository>(context, listen: false);
+
+                  await bookRepository.addEmprunt(Emprunt(
+                  bookId: book.bookId ?? 0,
+                  dateEmprunt: DateTime.now(),
+                  dateRetour: DateTime.now().add(Duration(days: 14)),
+                  ));
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text('Livre emprunté avec succès!'),
+                  ));
+                  },
+                child: Text('Emprunter'),
               ),
             ],
           ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 
-import 'Empreintes.dart';
+import 'Emprunts.dart';
 import 'GestionLivres.dart';
 import 'reservations.dart';
 import 'Retours.dart';
@@ -184,7 +184,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => HistoriqueEmpreintesPage(bookRepository: widget.bookRepository),
+                  MaterialPageRoute(builder: (context) => HistoriqueEmpruntsPage(bookRepository: widget.bookRepository),
                 )
                 );
               },
