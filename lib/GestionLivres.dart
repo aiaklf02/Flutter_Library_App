@@ -156,6 +156,12 @@ class BookDataProvider {
       whereArgs: [bookId],
     );
   }
+  Future<void> updatebookNumber(int bookId) async {
+    await db.rawUpdate('UPDATE books SET availableCopies = availableCopies - 1 WHERE bookId = ?', [bookId]);
+  }
+  Future<void> addbookNumber(int bookId) async {
+    await db.rawUpdate('UPDATE books SET availableCopies = availableCopies + 1 WHERE bookId = ?', [bookId]);
+  }
   Future<void> addEmprunt(Emprunt emprunt) async {
   await db.insert('Emprunt', emprunt.toMap());
   }
@@ -242,6 +248,12 @@ class BookRepository {
   }
   Future<void> addEmprunt(Emprunt emprunt) async {
     await dataProvider.addEmprunt(emprunt);
+  }
+  Future<void> updatebookNumber(int bookId) async {
+    await dataProvider.updatebookNumber(bookId);
+  }
+  Future<void> addbookNumber(int bookId) async {
+    await dataProvider.addbookNumber(bookId);
   }
 
   Future<void> addRetour(Retour retour) async {

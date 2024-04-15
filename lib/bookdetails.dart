@@ -170,6 +170,7 @@ class BookDetailsPage extends StatelessWidget {
                   dateEmprunt: DateTime.now(),
                   dateRetour: DateTime.now().add(Duration(days: 14)),
                   ));
+                  await bookRepository.updatebookNumber(bookIds);
                   print(" This is all the books instances {$bookRepository}");
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text('Livre emprunté avec succès!'),

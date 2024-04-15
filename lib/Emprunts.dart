@@ -80,6 +80,7 @@ class HistoriqueEmpruntsPage extends StatelessWidget {
                                     dateRetour: DateTime.now(),
                                   ),
                                 );
+                                await bookRepository.addbookNumber(emprunt.bookId);
                               },
                             )
                             else 
