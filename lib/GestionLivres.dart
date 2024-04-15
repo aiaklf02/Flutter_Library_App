@@ -3,7 +3,7 @@ import 'AddNewBook.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'GestionEmprunts.dart';
-
+import 'Retours.dart';
 
 // Step 1: Create the Book model
 class Book {
@@ -28,10 +28,9 @@ class Book {
     };
 
   }
- 
-
 }
 
+// The BookDataProvider is the DatabaseHelper, its role is to manage the database by creating the tables and Dropping them here
 class BookDataProvider {
   static const tableName = 'books';
   late final Database db;
@@ -56,13 +55,14 @@ class BookDataProvider {
         //await db.execute('CREATE TABLE IF EXISTS EmpruntMigration (empruntId INTEGER PRIMARY KEY AUTOINCREMENT, bookId INTEGER NOT NULL, dateEmprunt TEXT NOT NULL, dateRetour TEXT NOT NULL)');
         //await db.execute('INSERT INTO EmpruntMigration SELECT * FROM Emprunt');
         //await db.execute('DROP TABLE Emprunt');
-        
+
         await db.execute('DROP TABLE IF EXISTS $tableName');
         await db.execute('DROP TABLE Emprunt');
+        await db.execute('DROP TABLE Retours');
         // Recreate the tables
         await _createDb(db, newVersion);
       },
-      version: 2,  // Increase this number whenever you want to update the schema
+      version: 6,  // Increase this number whenever you want to update the schema
     );      
     print("Database initialized.");
   }
@@ -78,10 +78,18 @@ class BookDataProvider {
         bookId INTEGER NOT NULL,
         dateEmprunt TEXT NOT NULL,
         dateRetour TEXT NOT NULL,
+        Remis INTEGER,
         FOREIGN KEY (bookId) REFERENCES Book(bookId)
       )
     ''');
     print("Creating Emprunt in the database...");
+    await db.execute('''CREATE TABLE Retours (Retoursid INTEGER PRIMARY KEY AUTOINCREMENT, 
+        Empruntid INT,
+        dateRetour TEXT NOT NULL,
+        FOREIGN KEY(Empruntid) REFERENCES Emprunt(empruntId)
+        )
+      ''');
+  
   }
  
 
@@ -127,9 +135,28 @@ class BookDataProvider {
   }
   Future<void> addEmprunt(Emprunt emprunt) async {
   await db.insert('Emprunt', emprunt.toMap());
-}
-  
-  
+  }
+  Future<void> addRetour(Retour retour) async {
+    await db.insert('Retours',retour.toMap());
+  }
+  Future<List<Retour>> fetchRetour() async {
+    final List<Map<String, dynamic>> maps = await db.query('Retours');
+    return List.generate(maps.length, (i) {
+      return Retour(
+        Retoursid: maps[i]['Retoursid'],
+        Empruntid: maps[i]['Empruntid'],
+        dateRetour: maps[i]['dateRetour'],
+      );
+    });
+  }
+  Future<void> UpdateEmprunt(Emprunt emprunt) async {
+    await db.update(
+      'Emprunt',
+      {'Remis': true}, 
+      where: "empruntId = ?",
+      whereArgs: [emprunt.empruntId], 
+    );
+  }
 }
 
 
@@ -176,12 +203,13 @@ class BookRepository {
     }
   }
 
-   Future<List<Emprunt>> getEmprunts() async {
+  Future<List<Emprunt>> getEmprunts() async {
   
     final List<Map<String, dynamic>> empruntsMap = await dataProvider.db.query('Emprunt');
 
     return empruntsMap.map((empruntMap) {
       return Emprunt(
+        Remis: empruntMap['Remis'] == 1,
         empruntId: empruntMap['empruntId'],
         bookId: empruntMap['bookId'],
         dateEmprunt: DateTime.parse(empruntMap['dateEmprunt']),
@@ -192,7 +220,13 @@ class BookRepository {
   Future<void> addEmprunt(Emprunt emprunt) async {
     await dataProvider.addEmprunt(emprunt);
   }
-  
+
+  Future<void> addRetour(Retour retour) async {
+    await dataProvider.addRetour(retour);
+  }
+  Future<void> UpdateEmprunt(Emprunt emprunt) async {
+    await dataProvider.addEmprunt(emprunt);
+  }
 }
 
 

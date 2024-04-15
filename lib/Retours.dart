@@ -1,5 +1,19 @@
 import 'package:flutter/material.dart';
 
+class Retour {
+  final int? Retoursid;
+  final int Empruntid;
+  final DateTime dateRetour;
+
+  Retour({this.Retoursid,required this.Empruntid, required this.dateRetour});
+  Map<String, dynamic> toMap() {
+      return {
+        'Retoursid': Retoursid,
+        'Empruntid': Empruntid,
+        'dateRetour': dateRetour.toIso8601String(),
+      };
+    }
+}
 
 class RetoursPage extends StatelessWidget {
   @override

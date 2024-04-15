@@ -176,7 +176,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             ListTile(
               leading: const Icon(Icons.book),
-              title: const Text(' Mes Empreintes ', style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1)),),
+              title: const Text(' Mes Emprunts ', style: TextStyle(color: Color.fromRGBO(255, 255, 255, 1)),),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(

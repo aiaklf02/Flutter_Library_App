@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'GestionLivres.dart';
 import 'GestionEmprunts.dart';
+import 'Retours.dart';
 
 class HistoriqueEmpruntsPage extends StatelessWidget {
   final BookRepository bookRepository;
@@ -47,15 +48,45 @@ class HistoriqueEmpruntsPage extends StatelessWidget {
                         );
                       } else {
                         final book = snapshot.data;
-                        return ListTile(
-                          title: Text('Livre emprunté : ${book?.title ?? 'Titre non disponible'}'),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Date d\'emprunt : ${emprunt.dateEmprunt}'),
-                              Text('Date de retour : ${emprunt.dateRetour}'),
-                            ],
-                          ),
+                        print ("L'emprunt a été remis : ${emprunt.Remis}");
+                        return Column(
+                          children: [
+                            ListTile(
+                              title: Text('Livre emprunté : ${book?.title ?? 'Titre non disponible'}'),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Date d\'emprunt : ${emprunt.dateEmprunt}'),
+                                  Text('Date de retour : ${emprunt.dateRetour}'),
+                                ],
+                              ),
+                            ),
+                            if(emprunt.Remis == false)
+                              IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () async {
+                                await bookRepository.UpdateEmprunt(
+                                  Emprunt(
+                                    empruntId: emprunt.empruntId,
+                                    Remis: true,
+                                    bookId: emprunt.bookId,
+                                    dateEmprunt: emprunt.dateEmprunt,
+                                    dateRetour: emprunt.dateRetour,
+                                  ),
+                                );
+                                await bookRepository.addRetour(
+                                  Retour(
+                                    Empruntid: emprunt.bookId,
+                                    dateRetour: DateTime.now(),
+                                  ),
+                                );
+                              },
+                            )
+                            else 
+                            ListTile(
+                              title: Text('Livre rendu'),
+                            ),
+                          ],
                         );
                       }
                     },

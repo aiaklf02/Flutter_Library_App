@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'GestionLivres.dart';
 import 'GestionEmprunts.dart';
 import 'dart:io';
-import 'package:provider/provider.dart';
 
 // class BookDetailsPage extends StatelessWidget {
 //   @override
@@ -159,7 +158,7 @@ class BookDetailsPage extends StatelessWidget {
 
                   // Handle reserve button pressed
                 },
-                child: Text('Reserver'),
+                child: Text('Réserver'),
               ),
               ElevatedButton(
                   onPressed: () async {
