@@ -4,6 +4,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'GestionEmprunts.dart';
 import 'Retours.dart';
+import 'reservations.dart';
 
 // Step 1: Create the Book model
 class Book {
@@ -59,6 +60,8 @@ class BookDataProvider {
         await db.execute('DROP TABLE IF EXISTS $tableName');
         await db.execute('DROP TABLE Emprunt');
         await db.execute('DROP TABLE Retours');
+        await db.execute('DROP TABLE Reservations');
+
         // Recreate the tables
         await _createDb(db, newVersion);
       },
@@ -89,7 +92,17 @@ class BookDataProvider {
         FOREIGN KEY(Empruntid) REFERENCES Emprunt(empruntId)
         )
       ''');
-  
+    print("Creating Reservations in the database...");
+
+    await db.execute('''
+    CREATE TABLE Reservations(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      bookId INTEGER NOT NULL,
+      date TEXT NOT NULL
+      FOREIGN KEY (bookId) REFERENCES Book(bookId)
+
+    )
+  ''');
   }
  
 
@@ -180,6 +193,25 @@ class BookDataProvider {
       whereArgs: [emprunt.empruntId], 
     );
   }
+
+  Future<void> addReservation(Reservation reservation) async {
+    await db.insert('Reservations', reservation.toMap());
+  }
+
+  Future<List<Reservation>> fetchReservations() async {
+    final List<Map<String, dynamic>> maps = await db.query('Reservations');
+    return List.generate(maps.length, (i) {
+      return Reservation(
+        id: maps[i]['id'],
+        bookId: maps[i]['bookId'],
+        date: DateTime.parse(maps[i]['date']),
+      );
+    });
+  }
+
+  Future<void> deleteReservation(int id) async {
+    await db.delete('Reservations', where: 'id = ?', whereArgs: [id]);
+  }
 }
 
 
@@ -250,6 +282,24 @@ class BookRepository {
   Future<void> updateEmprunt(Emprunt emprunt) async {
     await dataProvider.updateEmprunt(emprunt);
   }
+  Future<void> addReservation(Reservation reservation) async {
+    await dataProvider.addReservation(reservation);
+  }
+
+  Future<List<Reservation>> getReservations() async {
+    return await dataProvider.fetchReservations();
+  }
+
+  Future<void> deleteReservation(int id) async {
+    await dataProvider.deleteReservation(id);
+  }
+  Future<List<Reservation>> fetchReservations() async {
+    return await dataProvider.fetchReservations();
+  }
+  Future<Book>? getBookById(int bookId) async {
+    return await dataProvider.getBook(bookId);
+  }
+
 }
 
 

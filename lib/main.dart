@@ -170,7 +170,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Navigator.pop(context);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => reservationsPage()),
+                  MaterialPageRoute(builder: (context) => ReservationsPage(bookRepository: widget.bookRepository)),
                 );
               },
             ),
