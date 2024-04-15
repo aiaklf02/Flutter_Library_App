@@ -99,17 +99,17 @@ class _AddBookPageState extends State<AddBookPage> {
                 Container(
                   width: 100,
                   height: 100,
-                  child: Image.file(_imageFile!, fit: BoxFit.cover),
+                  child: Image.file(File(_imageFile!.path), fit: BoxFit.cover),
                 ),
               ] else if (_book.imagePath.isNotEmpty) ...[
                 Container(
                   width: 100,
                   height: 100,
-                  child: Image.network(_book.imagePath, fit: BoxFit.cover),
+                  child: Image.file(File(_book.imagePath), fit: BoxFit.cover),
                 ),
               ] else ...[
                 Text('No image selected'),
-              ],      
+              ],
               ElevatedButton(
                 child: Text('Save'),
                 onPressed: () {

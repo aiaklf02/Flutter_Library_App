@@ -168,7 +168,7 @@ class BookDataProvider {
       return Retour(
         Retoursid: maps[i]['Retoursid'],
         Empruntid: maps[i]['Empruntid'],
-        dateRetour: maps[i]['dateRetour'],
+        dateRetour: DateTime.parse(maps[i]['dateRetour']),
       );
     });
   }
