@@ -175,10 +175,47 @@ class BookDetailsPage extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 20),
-          ],
-        ),
-      ),
+
+
+          SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  _showReservationConfirmation(context, book.title);
+
+                  // Handle reserve button pressed
+                },
+                child: Text('Réserver'),
+              ),
+              ElevatedButton(
+                  onPressed: () async {
+                  print ("Clicked");
+                  int ?bookIds = book.bookId;
+                  print ("This is the book instance {$bookIds}");
+                  await bookRepository.addEmprunt(Emprunt(
+                  bookId: bookIds!,
+                  dateEmprunt: DateTime.now(),
+                  dateRetour: DateTime.now().add(Duration(days: 14)),
+                  ));
+                  await bookRepository.updatebookNumber(bookIds);
+                  print(" This is all the books instances {$bookRepository}");
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text('Livre emprunté avec succès!'),
+                  ));
+                  },
+                child: Text('Emprunter'),
+              ),
+            ],
+          ),
+          SizedBox(height: 20),
+
+        ],
+
+
+      ),),
+
     );
   }
 

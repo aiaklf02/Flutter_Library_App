@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'GestionLivres.dart';
+import 'dart:io';
 
 class Retour {
   final int? Retoursid;
@@ -7,23 +8,40 @@ class Retour {
   final DateTime dateRetour;
 
   Retour({this.Retoursid,required this.Empruntid, required this.dateRetour});
+  //fix to the error String is not a subtype of type 'DateTime'
+  Retour.fromMap(Map<String, dynamic> map) 
+    : Retoursid = map['Retoursid'],
+      Empruntid = map['Empruntid'],
+      dateRetour = DateTime.parse(map['dateRetour']);
+
   Map<String, dynamic> toMap() {
-      return {
-        'Retoursid': Retoursid,
-        'Empruntid': Empruntid,
-        'dateRetour': dateRetour.toIso8601String(),
-      };
-    }
+    return {
+      'Retoursid': Retoursid,
+      'Empruntid': Empruntid,
+      'dateRetour': dateRetour.toIso8601String(),
+    };
+  }
 }
 
 class RetoursPage extends StatefulWidget {
   @override
   _RetoursPageState createState() => _RetoursPageState();
 }
-class _RetoursPageState extends State<RetoursPage> {
-  late Future<List<Retour>> Retours = BookDataProvider().fetchRetour();
-  final bookDataProvider = BookDataProvider();
 
+class _RetoursPageState extends State<RetoursPage> {
+  late Future<List<Retour>> Retours;
+  late BookDataProvider bookDataProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    bookDataProvider = BookDataProvider();
+    bookDataProvider.init().then((value) {
+      setState(() {
+        Retours = bookDataProvider.fetchRetour();
+      });
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,9 +62,15 @@ class _RetoursPageState extends State<RetoursPage> {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       return ListTile(
-                        leading: Image.network(snapshot.data!.imagePath),  // Display the book image
-                        title: Text('Emprunt ID: ${retour.Empruntid}'),
-                        subtitle: Text('Retour ID: ${retour.Retoursid}'),
+                        leading: Image.file(
+                          File(snapshot.data!.imagePath),
+                          errorBuilder: (context, error, stackTrace) {
+                            print('imagePath: ${snapshot.data!.imagePath}');
+                            return Text('Failed to load image');
+                          },
+                        ),
+                        title: Text('Livre Emprunté : ${snapshot.data!.title}'), // Access title from snapshot.data
+                        subtitle: Text('Date Retour: ${retour.dateRetour}'),
                       );
                     } else if (snapshot.hasError) {
                       return Text('Error: ${snapshot.error}');
