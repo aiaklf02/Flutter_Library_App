@@ -117,6 +117,29 @@ class BookDataProvider {
     );
   }
 
+  Future<Book> getBook(int id) async {
+    List<Map<String, dynamic>> maps = await db.query(
+      tableName,
+      where: 'bookId = ?',
+      whereArgs: [id],
+    );
+  
+    if (maps.length > 0) {
+      return Book(
+        bookId: maps[0]['bookId'],
+        title: maps[0]['title'],
+        imagePath: maps[0]['imagePath'], 
+        author: '', 
+        availableCopies: 0, 
+        publicationYear: maps[0]['publicationYear'], 
+        category: '',
+        
+      );
+    }
+  
+    throw Exception('Book ID $id not found');
+  }
+
   Future<void> updateBook(Book book) async {
     await db.update(
       tableName,
@@ -149,10 +172,10 @@ class BookDataProvider {
       );
     });
   }
-  Future<void> UpdateEmprunt(Emprunt emprunt) async {
+  Future<void> updateEmprunt(Emprunt emprunt) async {
     await db.update(
       'Emprunt',
-      {'Remis': true}, 
+      {'Remis': 1}, 
       where: "empruntId = ?",
       whereArgs: [emprunt.empruntId], 
     );
@@ -224,8 +247,8 @@ class BookRepository {
   Future<void> addRetour(Retour retour) async {
     await dataProvider.addRetour(retour);
   }
-  Future<void> UpdateEmprunt(Emprunt emprunt) async {
-    await dataProvider.addEmprunt(emprunt);
+  Future<void> updateEmprunt(Emprunt emprunt) async {
+    await dataProvider.updateEmprunt(emprunt);
   }
 }
 

@@ -63,9 +63,9 @@ class HistoriqueEmpruntsPage extends StatelessWidget {
                             ),
                             if(emprunt.Remis == false)
                               IconButton(
-                              icon: Icon(Icons.delete),
+                              icon: Icon(Icons.check_circle_outline),
                               onPressed: () async {
-                                await bookRepository.UpdateEmprunt(
+                                await bookRepository.updateEmprunt(
                                   Emprunt(
                                     empruntId: emprunt.empruntId,
                                     Remis: true,
