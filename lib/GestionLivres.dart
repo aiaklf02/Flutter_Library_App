@@ -3,7 +3,6 @@ import 'AddNewBook.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'GestionEmprunts.dart';
-import 'package:path_provider/path_provider.dart';
 
 
 // Step 1: Create the Book model
@@ -38,6 +37,7 @@ class BookDataProvider {
   late final Database db;
 
   Future<BookDataProvider> init() async {
+    print("Initializing database...");
     await initDatabase();
     return this;
   }
@@ -45,18 +45,44 @@ class BookDataProvider {
   Future<void> initDatabase() async {
     db = await openDatabase(
       join(await getDatabasesPath(), 'books.db'),
-      onCreate: (db, version) {
-        db.execute(
-          "CREATE TABLE $tableName(bookId INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, author TEXT, category TEXT, publicationYear INTEGER, availableCopies INTEGER, imagePath TEXT)",
-        );
-        createEmpruntTable(db);
+      onCreate: (db, version) async {
+        await _createDb(db, version);
       },
-      version: 1,
-    );
+      onUpgrade: (db, oldVersion, newVersion) async {
+        //You can create a duplicate database and migrate the data to the new database
+        //here to avoid any useless problem, we avoid doing that and just drop the table and recreate it
+        //but for realtime application, you should consider migrating the data
 
-
+        //await db.execute('CREATE TABLE IF EXISTS EmpruntMigration (empruntId INTEGER PRIMARY KEY AUTOINCREMENT, bookId INTEGER NOT NULL, dateEmprunt TEXT NOT NULL, dateRetour TEXT NOT NULL)');
+        //await db.execute('INSERT INTO EmpruntMigration SELECT * FROM Emprunt');
+        //await db.execute('DROP TABLE Emprunt');
+        
+        await db.execute('DROP TABLE IF EXISTS $tableName');
+        await db.execute('DROP TABLE Emprunt');
+        // Recreate the tables
+        await _createDb(db, newVersion);
+      },
+      version: 2,  // Increase this number whenever you want to update the schema
+    );      
+    print("Database initialized.");
   }
- 
+  
+  Future<void> _createDb(Database db, int version) async {
+    await db.execute(
+      "CREATE TABLE $tableName(bookId INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, author TEXT, category TEXT, publicationYear INTEGER, availableCopies INTEGER, imagePath TEXT)",
+    );
+    print("Creating books in the database...");
+    await db.execute('''
+      CREATE TABLE Emprunt (
+        empruntId INTEGER PRIMARY KEY AUTOINCREMENT,
+        bookId INTEGER NOT NULL,
+        dateEmprunt TEXT NOT NULL,
+        dateRetour TEXT NOT NULL,
+        FOREIGN KEY (bookId) REFERENCES Book(bookId)
+      )
+    ''');
+    print("Creating Emprunt in the database...");
+  }
  
 
   Future<List<Book>> fetchBooks() async {
@@ -195,7 +221,6 @@ class _GestionLivresState extends State<GestionLivres> {
       appBar: AppBar(
         title: Text('Gestion Livres Page',style: TextStyle(color: Color.fromRGBO(255, 255,255,1),fontSize: 25),),
         backgroundColor: Color.fromARGB(255, 43, 44, 68),
-
         actions: [
           IconButton(
             icon: Icon(Icons.add,size: 32, color: Colors.white),
@@ -222,7 +247,6 @@ class _GestionLivresState extends State<GestionLivres> {
             }, // Call _refreshData when button is pressed
           ),
         ],
-
       ),
       body: Column(
         children: [

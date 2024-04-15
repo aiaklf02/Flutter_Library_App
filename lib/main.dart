@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
-
 import 'Emprunts.dart';
 import 'GestionLivres.dart';
 import 'reservations.dart';
 import 'Retours.dart';
 import 'bookdetails.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
 
 
 String imagePath = 'assets/bookcases-1869616_640.jpg';
@@ -102,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         Navigator.push(
                           context,
                           // MaterialPageRoute(builder: (context) => BookDetailsPage()),
-                          MaterialPageRoute(builder: (context) => BookDetailsPage(book: book)),
+                          MaterialPageRoute(builder: (context) => BookDetailsPage(book: book, bookRepository: widget.bookRepository),),
 
                         );
                       },

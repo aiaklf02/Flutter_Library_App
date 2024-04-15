@@ -30,17 +30,4 @@ class Emprunt {
 
 }
 
-//create Table Emprunt in database
-Future<void> createEmpruntTable(Database db) async {
-  await db.execute('''
-    CREATE TABLE Emprunt (
-      empruntId INTEGER PRIMARY KEY AUTOINCREMENT,
-      bookId INTEGER NOT NULL,
-      dateEmprunt TEXT NOT NULL,
-      dateRetour TEXT NOT NULL,
-      FOREIGN KEY (bookId) REFERENCES Book(bookId)
-    )
-  ''');
-}
-
 

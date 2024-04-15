@@ -22,8 +22,9 @@ import 'package:provider/provider.dart';
 
 class BookDetailsPage extends StatelessWidget {
   final Book book;
+  final BookRepository bookRepository;
 
-  const BookDetailsPage({Key? key, required this.book}) : super(key: key);
+  const BookDetailsPage({Key? key, required this.book,required this.bookRepository}) : super(key: key);
 
 
   @override
@@ -162,13 +163,15 @@ class BookDetailsPage extends StatelessWidget {
               ),
               ElevatedButton(
                   onPressed: () async {
-                  final bookRepository = Provider.of<BookRepository>(context, listen: false);
-
+                  print ("Clicked");
+                  int ?bookIds = book.bookId;
+                  print ("This is the book instance {$bookIds}");
                   await bookRepository.addEmprunt(Emprunt(
-                  bookId: book.bookId ?? 0,
+                  bookId: bookIds!,
                   dateEmprunt: DateTime.now(),
                   dateRetour: DateTime.now().add(Duration(days: 14)),
                   ));
+                  print(" This is all the books instances {$bookRepository}");
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text('Livre emprunté avec succès!'),
                   ));
