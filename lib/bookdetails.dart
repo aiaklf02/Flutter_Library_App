@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_library_app/reservations.dart';
 import 'GestionLivres.dart';
 import 'GestionEmprunts.dart';
 import 'dart:io';
@@ -166,6 +167,7 @@ class BookDetailsPage extends StatelessWidget {
                       dateEmprunt: DateTime.now(),
                       dateRetour: DateTime.now().add(Duration(days: 14)),
                     ));
+                    await bookRepository.updatebookNumber(bookIds);
                     print(" This is all the books instances {$bookRepository}");
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content: Text('Livre emprunté avec succès!'),
@@ -175,42 +177,6 @@ class BookDetailsPage extends StatelessWidget {
                 ),
               ],
             ),
-
-
-          SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  _showReservationConfirmation(context, book.title);
-
-                  // Handle reserve button pressed
-                },
-                child: Text('Réserver'),
-              ),
-              ElevatedButton(
-                  onPressed: () async {
-                  print ("Clicked");
-                  int ?bookIds = book.bookId;
-                  print ("This is the book instance {$bookIds}");
-                  await bookRepository.addEmprunt(Emprunt(
-                  bookId: bookIds!,
-                  dateEmprunt: DateTime.now(),
-                  dateRetour: DateTime.now().add(Duration(days: 14)),
-                  ));
-                  await bookRepository.updatebookNumber(bookIds);
-                  print(" This is all the books instances {$bookRepository}");
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text('Livre emprunté avec succès!'),
-                  ));
-                  },
-                child: Text('Emprunter'),
-              ),
-            ],
-          ),
-          SizedBox(height: 20),
-
         ],
 
 
@@ -245,7 +211,11 @@ class BookDetailsPage extends StatelessWidget {
     );
   }
 
-  void _confirmReservation(BuildContext context, String bookTitle) {
+  Future<void> _confirmReservation(BuildContext context, String bookTitle) async {
+    await bookRepository.addReservation(Reservation(
+      bookId: book.bookId!,
+      date: DateTime.now(),
+    ));
     showDialog(
       context: context,
       builder: (BuildContext context) {

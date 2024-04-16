@@ -60,12 +60,12 @@ class BookDataProvider {
         await db.execute('DROP TABLE IF EXISTS $tableName');
         await db.execute('DROP TABLE Emprunt');
         await db.execute('DROP TABLE Retours');
-        await db.execute('DROP TABLE Reservations');
+        // await db.execute('DROP TABLE Reservations');
 
         // Recreate the tables
         await _createDb(db, newVersion);
       },
-      version: 6,  // Increase this number whenever you want to update the schema
+      version: 8,  // Increase this number whenever you want to update the schema
     );      
     print("Database initialized.");
   }
@@ -98,11 +98,10 @@ class BookDataProvider {
     CREATE TABLE Reservations(
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       bookId INTEGER NOT NULL,
-      date TEXT NOT NULL
+      date TEXT NOT NULL,
       FOREIGN KEY (bookId) REFERENCES Book(bookId)
-
     )
-  ''');
+    ''');
   }
  
 
@@ -201,6 +200,7 @@ class BookDataProvider {
   }
 
   Future<void> addReservation(Reservation reservation) async {
+    print('Adding reservation: ${reservation.toMap()}'); // Debug line
     await db.insert('Reservations', reservation.toMap());
   }
 
