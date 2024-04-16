@@ -70,6 +70,15 @@ class _ReservationsPageState extends State<ReservationsPage> {
                     },
                   ),
                   subtitle: Text('Date de réservation: ${reservation.date}'),
+                    trailing: IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () async {
+                        await widget.bookRepository.deleteReservation(reservation.id!);
+                        setState(() {
+                          reservations = widget.bookRepository.fetchReservations();
+                        });
+                      },
+                    ),
                 );
               },
             );
