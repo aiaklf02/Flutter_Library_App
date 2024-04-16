@@ -63,7 +63,7 @@ class _ReservationsPageState extends State<ReservationsPage> {
                         return Text('Erreur: ${bookSnapshot.error}');
                       } else if (bookSnapshot.hasData) {
                         Book book = bookSnapshot.data!;
-                        return Text('ID de la réservation: ${reservation.id}, Titre du livre: ${book.title}');
+                        return Text("Numéro d'attente de la réservation: ${reservation.id}, Titre du livre: ${book.title}");
                       } else {
                         return Text('Livre inconnu');
                       }

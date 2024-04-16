@@ -85,7 +85,7 @@ class HistoriqueEmpruntsPage extends StatelessWidget {
                             )
                             else 
                             ListTile(
-                              title: Text('Livre rendu'),
+                              title: Text('Livre rendu',style:TextStyle(color: Colors.green[300])),
                             ),
                           ],
                         );
